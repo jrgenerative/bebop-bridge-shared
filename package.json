@@ -1,0 +1,38 @@
+{
+  "name": "bebop-bridge-shared",
+  "version": "1.0.1",
+  "license": "MIT",
+  "private": true,
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "clean": "rimraf ./index.d.ts ./index.js ./index.js.map ./lib/**/*.d.ts ./lib/**/*.js ./lib/**/*.js.map",
+    "tslint": "tslint \"./lib/**/*.ts\" --exclude \"./**/*.d.ts\" -c \"./tasks/tslint.json\" -t verbose --project \"./tsconfig.json\"",
+    "tsc": "tsc",
+    "build": "npm run clean && npm run tslint && npm run tsc"
+  },
+  "dependencies": {
+    "async": "^2.1.5",
+    "fs-extra": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/async": "^2.0.38",
+    "@types/core-js": "^0.9.36",
+    "@types/fs-extra": "0.0.37",
+    "@types/hammerjs": "^2.0.33",
+    "@types/jasmine": "^2.2.34",
+    "@types/node": "^6.0.38",
+    "@types/source-map": "^0.5.0",
+    "awesome-typescript-loader": "~3.0.8",
+    "concurrently": "^2.2.0",
+    "core-js": "^2.4.1",
+    "npm-run-all": "^3.1.2",
+    "rimraf": "~2.5.4",
+    "rxjs": "~5.0.2",
+    "ts-helpers": "1.1.2",
+    "ts-node": "^2.0.0",
+    "tslint": "~4.2.0",
+    "tslint-loader": "^3.3.0",
+    "typescript": "2.2.1"
+  }
+}
