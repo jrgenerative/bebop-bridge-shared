@@ -1,0 +1,6 @@
+node_modules
+tasks
+tsconfig.json
+tslint.json
+*.ts
+!*.d.ts
