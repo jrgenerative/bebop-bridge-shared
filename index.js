@@ -3,7 +3,7 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./lib/flightplan"));
-__export(require("./lib/flightplan.service"));
-__export(require("./lib/drone.service"));
+__export(require("./flightplan"));
+__export(require("./flightplan.service"));
+__export(require("./drone.service"));
 //# sourceMappingURL=index.js.map

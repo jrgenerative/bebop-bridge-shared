@@ -1,4 +1,5 @@
 import { Flightplan } from './flightplan';
+import { Observable } from 'rxjs/Observable';
 export interface DroneServiceConstructor {
     new (): DroneService;
 }
@@ -9,13 +10,19 @@ export declare function createDroneService(ctor: DroneServiceConstructor): Drone
  */
 export interface DroneService {
     /**
-     * Implement by deriving from EventEmitter.
+     * A hot observable returning the current flight plan whenever a new one is stored on the vehicle.
      */
-    on(event: string, listener: Function): this;
+    flightplan(): Observable<Flightplan>;
     /**
-     * A flightplan event.
+     * A hot observable reporting the distance to the take-off position
+     * of the currently loaded flight plan.
      */
-    on(event: 'flightplan', listener: (flightplan: Flightplan) => void): this;
+    distanceToFlightplanTakeoff(): Observable<number>;
+    /**
+     * Return the distance in meters from the take-off position of the
+     * currently loaded flight plan.
+     */
+    getDistanceToFlightplanTakeoff(): Observable<number>;
     /**
      * Requests to establish a connection to the DroneService.
      * Once the connection is established the event "connected" is emitted with a boolean as parameter

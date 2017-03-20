@@ -7,6 +7,8 @@
     "experimentalDecorators": false,
     "removeComments": false,
     "noImplicitAny": false,
-    "declaration": true
+    "declaration": true,
+    "rootDir": "src",
+    "outDir": ""
   }
 }
