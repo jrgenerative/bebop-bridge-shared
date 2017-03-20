@@ -1,4 +1,5 @@
 import { Flightplan } from './flightplan';
+import { Observable } from 'rxjs/Observable';
 
 export interface DroneServiceConstructor {
     new (): DroneService;
@@ -15,14 +16,15 @@ export function createDroneService(ctor: DroneServiceConstructor): DroneService 
 export interface DroneService {
 
     /**
-     * Implement by deriving from EventEmitter.
+     * A hot observable returning the current flight plan whenever a new one is stored on the vehicle.
      */
-    on(event: string, listener: Function): this;
+    flightplan(): Observable<Flightplan>
 
     /**
-     * A flightplan event.
+     * A hot observable reporting the distance to the take-off position
+     * of the currently loaded flight plan.
      */
-    on(event: 'flightplan', listener: (flightplan: Flightplan) => void): this;
+    flightplanTakeoffDistance(): Observable<number>;
 
     // TODO: add all possible events
     //  * Events:
@@ -30,6 +32,9 @@ export interface DroneService {
     //  * 'battery-level': 0 to 100.
     //  * 'connection-quality': in dbm -30 (amazing), -67 (very good), -70 (okay), -80 (not good), to -90 (no reception possible anymore).
     //  * 
+
+    // ===============================================================================================
+
 
     /**
      * Requests to establish a connection to the DroneService.
@@ -130,5 +135,11 @@ export interface DroneService {
      * If successful, a 'flightplan' event delivering an empty flight plan is emitted.
      */
     deleteFlightplan(): void;
+
+    /**
+     * Return the distance in meters from the take-off position of the
+     * currently loaded flight plan.
+     */
+    distanceToFlightplanTakeoff(): Observable<number>;
 
 }
