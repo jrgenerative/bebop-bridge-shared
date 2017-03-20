@@ -24,13 +24,13 @@ export interface DroneService {
      * A hot observable reporting the distance to the take-off position
      * of the currently loaded flight plan.
      */
-    distanceToFlightplanTakeoff(): Observable<number>;
+    distanceToFlightplanStart(): Observable<number>;
 
     /**
      * Return the distance in meters from the take-off position of the
      * currently loaded flight plan.
      */
-    getDistanceToFlightplanTakeoff(): Observable<number>;
+    getDistanceToFlightplanStart(): Observable<number>;
 
     // TODO: add all possible events as functions returning observables
     //  * Events:
