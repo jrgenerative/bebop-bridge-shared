@@ -16,21 +16,10 @@ export function createDroneService(ctor: DroneServiceConstructor): DroneService 
 export interface DroneService {
 
     /**
-     * A hot observable returning the current flight plan whenever a new one is stored on the vehicle.
+     * A hot observable returning the current flight plan whenever it 
+     * changes on the vehicle.
      */
     flightplan(): Observable<Flightplan>;
-
-    /**
-     * A hot observable reporting the distance to the take-off position
-     * of the currently loaded flight plan.
-     */
-    distanceToFlightplanStart(): Observable<number>;
-
-    /**
-     * Return the distance in meters from the take-off position of the
-     * currently loaded flight plan.
-     */
-    getDistanceToFlightplanStart(): Observable<number>;
 
     // TODO: add all possible events as functions returning observables
     //  * Events:
