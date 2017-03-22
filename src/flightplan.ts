@@ -237,6 +237,8 @@ export class Flightplan extends EventEmitter {
                 return;
             }
 
+            console.log("Kmz string: " + kmzString);
+
             kmzString.trim();  // remove whitespace and tabs before and after characters.
             kmzString = kmzString.substr(1, kmzString.length - 2); // remove " at start and end from stringify.
             let lines = kmzString.split('\\n');
@@ -249,13 +251,16 @@ export class Flightplan extends EventEmitter {
                 }
             }
 
+            console.log("path: " + path);
+            path = path.replace("\\\\t", ""); // remove stringify tabs
+            path = path.replace("\\r", ""); // remove stringify newline feeds
             path = path.trim(); // remove whitespace and tabs before and after characters.
+            console.log("path: " + path);
             let waypoints: string[] = path.split(' ');
             console.log('waypoints ' + JSON.stringify(waypoints));
             let defaultOrientation = 0; // point north
             let defaultRadius = 2; // 2m radius
             for (let i = 0; i < waypoints.length; i++) {
-                waypoints[i] = waypoints[i].replace(/\s/g, '');
                 console.log('waypoints[i]: ' + JSON.stringify(waypoints[i]));
                 let waypointCoords: string[] = waypoints[i].split(',');
                 console.log('waypointCoords ' + JSON.stringify(waypointCoords));

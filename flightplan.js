@@ -259,6 +259,7 @@ var Flightplan = (function (_super) {
             if (kmzString.length <= 2) {
                 return;
             }
+            console.log("Kmz string: " + kmzString);
             kmzString.trim(); // remove whitespace and tabs before and after characters.
             kmzString = kmzString.substr(1, kmzString.length - 2); // remove " at start and end from stringify.
             var lines = kmzString.split('\\n');
@@ -269,13 +270,16 @@ var Flightplan = (function (_super) {
                     break;
                 }
             }
+            console.log("path: " + path);
+            path = path.replace("\\\\t", ""); // remove stringify tabs
+            path = path.replace("\\r", ""); // remove stringify newline feeds
             path = path.trim(); // remove whitespace and tabs before and after characters.
+            console.log("path: " + path);
             var waypoints = path.split(' ');
             console.log('waypoints ' + JSON.stringify(waypoints));
             var defaultOrientation = 0; // point north
             var defaultRadius = 2; // 2m radius
             for (var i = 0; i < waypoints.length; i++) {
-                waypoints[i] = waypoints[i].replace(/\s/g, '');
                 console.log('waypoints[i]: ' + JSON.stringify(waypoints[i]));
                 var waypointCoords = waypoints[i].split(',');
                 console.log('waypointCoords ' + JSON.stringify(waypointCoords));
