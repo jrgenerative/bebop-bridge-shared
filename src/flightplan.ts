@@ -251,11 +251,14 @@ export class Flightplan extends EventEmitter {
 
             path = path.trim(); // remove whitespace and tabs before and after characters.
             let waypoints: string[] = path.split(' ');
+            console.log('waypoints ' + JSON.stringify(waypoints));
             let defaultOrientation = 0; // point north
             let defaultRadius = 2; // 2m radius
             for (let i = 0; i < waypoints.length; i++) {
                 waypoints[i] = waypoints[i].replace(/\s/g, '');
+                console.log('waypoints[i]: ' + JSON.stringify(waypoints[i]));
                 let waypointCoords: string[] = waypoints[i].split(',');
+                console.log('waypointCoords ' + JSON.stringify(waypointCoords));
                 if (waypointCoords.length !== 3) {
                     throw new Error("Waypoint with invalid number of coordinates encountered.");
                 }
