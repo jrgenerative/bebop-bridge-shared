@@ -11,6 +11,7 @@ export declare class Waypoint {
     radius: number;
     constructor(latitude: number, longitude: number, altitude: number, orientation: number, radius: number);
     readonly isValid: boolean;
+    clone(): Waypoint;
 }
 /**
  * Flight plan.
@@ -70,6 +71,7 @@ export declare class Flightplan extends EventEmitter {
     parseMavlink(flightplan: string): void;
     /**
      * Load a kmz (Google Earth path) file and parse its coordinate section.
+     * Sets first point as take-off location and last point as touch-down location.
      * @param kmz The content of a kmz file.
      * @param name The name to set to the flight plan.
      */

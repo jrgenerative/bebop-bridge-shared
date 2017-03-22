@@ -38,6 +38,11 @@ var Waypoint = (function () {
         enumerable: true,
         configurable: true
     });
+    Waypoint.prototype.clone = function () {
+        var newObj = JSON.parse(JSON.stringify(this));
+        var newPos = new Waypoint(parseFloat(newObj.latitude), parseFloat(newObj.longitude), parseFloat(newObj.height), parseFloat(newObj.orientation), parseFloat(newObj.radius));
+        return newPos;
+    };
     return Waypoint;
 }());
 exports.Waypoint = Waypoint;
@@ -246,6 +251,7 @@ var Flightplan = (function (_super) {
     };
     /**
      * Load a kmz (Google Earth path) file and parse its coordinate section.
+     * Sets first point as take-off location and last point as touch-down location.
      * @param kmz The content of a kmz file.
      * @param name The name to set to the flight plan.
      */

@@ -24,6 +24,19 @@ export class Waypoint {
             return false;
         }
     }
+
+    public clone(): Waypoint {
+        let newObj = JSON.parse(JSON.stringify(this));
+        let newPos = new Waypoint(
+            parseFloat(newObj.latitude),
+            parseFloat(newObj.longitude),
+            parseFloat(newObj.height),
+            parseFloat(newObj.orientation),
+            parseFloat(newObj.radius)
+        );
+        return newPos;
+    }
+
 }
 
 /**
@@ -220,6 +233,7 @@ export class Flightplan extends EventEmitter {
 
     /**
      * Load a kmz (Google Earth path) file and parse its coordinate section.
+     * Sets first point as take-off location and last point as touch-down location.
      * @param kmz The content of a kmz file.
      * @param name The name to set to the flight plan.
      */
