@@ -251,11 +251,15 @@ export class Flightplan extends EventEmitter {
                 }
             }
 
-            console.log("path: " + path);
+            console.log("path: " + path + ' elngth ' + path.length);
             path = path.replace("\\t", ""); // remove stringify tabs
             path = path.replace("\\r", ""); // remove stringify newline feeds
+            path = path.replace("\\n", ""); // remove stringify newline feeds
+            path = path.replace("\t", ""); // remove stringify tabs
+            path = path.replace("\r", ""); // remove stringify newline feeds
+            path = path.replace("\n", ""); // remove stringify newline feeds
             path = path.trim(); // remove whitespace and tabs before and after characters.
-            console.log("path: " + path);
+            console.log("path 2: " + path + ' elngth ' + path.length);
             let waypoints: string[] = path.split(' ');
             console.log('waypoints ' + JSON.stringify(waypoints));
             let defaultOrientation = 0; // point north
