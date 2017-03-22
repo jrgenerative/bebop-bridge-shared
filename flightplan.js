@@ -41,7 +41,7 @@ var Waypoint = (function () {
     });
     Waypoint.prototype.clone = function () {
         var newObj = JSON.parse(JSON.stringify(this));
-        var newPos = new Waypoint(parseFloat(newObj.latitude), parseFloat(newObj.longitude), parseFloat(newObj.height), parseFloat(newObj.orientation), parseFloat(newObj.radius));
+        var newPos = new Waypoint(parseFloat(newObj.latitude), parseFloat(newObj.longitude), parseFloat(newObj.altitude), parseFloat(newObj.orientation), parseFloat(newObj.radius));
         return newPos;
     };
     return Waypoint;

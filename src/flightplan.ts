@@ -31,7 +31,7 @@ export class Waypoint {
         let newPos = new Waypoint(
             parseFloat(newObj.latitude),
             parseFloat(newObj.longitude),
-            parseFloat(newObj.height),
+            parseFloat(newObj.altitude),
             parseFloat(newObj.orientation),
             parseFloat(newObj.radius)
         );
