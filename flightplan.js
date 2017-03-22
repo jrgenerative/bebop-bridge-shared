@@ -179,12 +179,14 @@ var Flightplan = (function (_super) {
         // backup waypoints
         var oldWps = [];
         this._waypoints.forEach(function (wp) {
+            console.log('cloning wp: ' + JSON.stringify(wp));
             oldWps.push(wp.clone());
         });
         this._waypoints = []; // clear waypoints
         // for each waypoint
         for (var i = 0; i < (oldWps.length - 1); i++) {
             var dist = geolib.getDistance(oldWps[i], oldWps[i + 1]); // distance between i and i+1
+            console.log('dist: ' + dist + ' stepsize ' + stepSize);
             var numSteps = Math.floor(dist / stepSize); // how many (entire) legs fit?
             this._waypoints.push(oldWps[i]); // add first existing waypoint (i) for each existing leg
             console.log('num steps ' + numSteps);
