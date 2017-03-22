@@ -252,7 +252,7 @@ export class Flightplan extends EventEmitter {
             }
 
             console.log("path: " + path);
-            path = path.replace("\\\\t", ""); // remove stringify tabs
+            path = path.replace("\\t", ""); // remove stringify tabs
             path = path.replace("\\r", ""); // remove stringify newline feeds
             path = path.trim(); // remove whitespace and tabs before and after characters.
             console.log("path: " + path);
