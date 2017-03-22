@@ -266,17 +266,13 @@ var Flightplan = (function (_super) {
                     break;
                 }
             }
-            console.log("path: " + path + ' elngth ' + path.length);
             path = path.trim(); // remove whitespace and tabs before and after characters.
             var waypoints = path.split(' ');
-            console.log('waypoints ' + JSON.stringify(waypoints));
             var defaultOrientation = 0; // point north
             var defaultRadius = 2; // 2m radius
             for (var i = 0; i < waypoints.length; i++) {
-                console.log('waypoints[i]: ' + JSON.stringify(waypoints[i]));
                 waypoints[i] = waypoints[i].replace(/\s/g, '');
                 var waypointCoords = waypoints[i].split(',');
-                console.log('waypointCoords ' + JSON.stringify(waypointCoords));
                 if (waypointCoords.length !== 3) {
                     throw new Error("Waypoint with invalid number of coordinates encountered.");
                 }
