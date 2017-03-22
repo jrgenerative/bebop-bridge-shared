@@ -153,9 +153,9 @@ export class Flightplan extends EventEmitter {
 
         // backup waypoints
         let oldWps: Waypoint[] = [];
-        for (let wp of this._waypoints) {
-            oldWps.push(wp.clone());
-        }
+        this._waypoints.forEach(wp => {
+             oldWps.push(wp.clone());
+        });
 
         this._waypoints = []; // clear waypoints
 
@@ -164,6 +164,7 @@ export class Flightplan extends EventEmitter {
             let dist = geolib.getDistance(oldWps[i], oldWps[i + 1]); // distance between i and i+1
             let numSteps = Math.floor(dist / stepSize); // how many (entire) legs fit?
             this._waypoints.push(oldWps[i]); // add first existing waypoint (i) for each existing leg
+            console.log('num steps ' + numSteps);
             if (numSteps > 1) {
                 let latStep = (oldWps[i + 1].latitude - oldWps[i].latitude) / numSteps;
                 let lonStep = (oldWps[i + 1].longitude - oldWps[i].longitude) / numSteps;
@@ -180,6 +181,7 @@ export class Flightplan extends EventEmitter {
                         oldWps[i].orientation, // keep orientation
                         oldWps[i].radius); // keep accuracy
                     this._waypoints.push(addPoint); // add new intermediate waypoint (i+j*step)
+                    console.log('Additional waypoint added: ' + JSON.stringify(addPoint));
                 }
             }
         }

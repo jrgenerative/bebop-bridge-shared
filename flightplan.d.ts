@@ -64,9 +64,8 @@ export declare class Flightplan extends EventEmitter {
      */
     readonly waypoints: Waypoint[];
     /**
-    * Add waypoints every stepSize meters to the waypoints of this flight path and store the
-    * result in outFlightPath. This function does not change 'this'. Accuracy radius and orientation
-    * are taken from the previous waypoint of the respective leg.
+    * Add waypoints every stepSize meters to the waypoints of this flight path.
+    *  Accuracy radius and orientation are taken from the previous waypoint of the respective leg.
     */
     addWaypoints(stepSize: number): void;
     /**

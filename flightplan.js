@@ -168,9 +168,8 @@ var Flightplan = (function (_super) {
         configurable: true
     });
     /**
-    * Add waypoints every stepSize meters to the waypoints of this flight path and store the
-    * result in outFlightPath. This function does not change 'this'. Accuracy radius and orientation
-    * are taken from the previous waypoint of the respective leg.
+    * Add waypoints every stepSize meters to the waypoints of this flight path.
+    *  Accuracy radius and orientation are taken from the previous waypoint of the respective leg.
     */
     Flightplan.prototype.addWaypoints = function (stepSize) {
         // At least 2 waypoints available?
@@ -179,16 +178,16 @@ var Flightplan = (function (_super) {
         }
         // backup waypoints
         var oldWps = [];
-        for (var _i = 0, _a = this._waypoints; _i < _a.length; _i++) {
-            var wp = _a[_i];
+        this._waypoints.forEach(function (wp) {
             oldWps.push(wp.clone());
-        }
+        });
         this._waypoints = []; // clear waypoints
         // for each waypoint
         for (var i = 0; i < (oldWps.length - 1); i++) {
             var dist = geolib.getDistance(oldWps[i], oldWps[i + 1]); // distance between i and i+1
             var numSteps = Math.floor(dist / stepSize); // how many (entire) legs fit?
             this._waypoints.push(oldWps[i]); // add first existing waypoint (i) for each existing leg
+            console.log('num steps ' + numSteps);
             if (numSteps > 1) {
                 var latStep = (oldWps[i + 1].latitude - oldWps[i].latitude) / numSteps;
                 var lonStep = (oldWps[i + 1].longitude - oldWps[i].longitude) / numSteps;
@@ -201,6 +200,7 @@ var Flightplan = (function (_super) {
                     var addPoint = new Waypoint(lat, lon, height, oldWps[i].orientation, // keep orientation
                     oldWps[i].radius); // keep accuracy
                     this._waypoints.push(addPoint); // add new intermediate waypoint (i+j*step)
+                    console.log('Additional waypoint added: ' + JSON.stringify(addPoint));
                 }
             }
         }
