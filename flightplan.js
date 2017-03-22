@@ -181,6 +181,7 @@ var Flightplan = (function (_super) {
         this._waypoints.forEach(function (wp) {
             console.log('cloning wp: ' + JSON.stringify(wp));
             oldWps.push(wp.clone());
+            console.log('cloned: ' + JSON.stringify(oldWps[oldWps.length - 1]));
         });
         this._waypoints = []; // clear waypoints
         // for each waypoint

@@ -155,7 +155,8 @@ export class Flightplan extends EventEmitter {
         let oldWps: Waypoint[] = [];
         this._waypoints.forEach(wp => {
             console.log('cloning wp: ' + JSON.stringify(wp));
-             oldWps.push(wp.clone());
+            oldWps.push(wp.clone());
+            console.log('cloned: ' + JSON.stringify(oldWps[oldWps.length - 1]));
         });
 
         this._waypoints = []; // clear waypoints
