@@ -68,4 +68,10 @@ export declare class Flightplan extends EventEmitter {
      * Throws and error in case a problem is encountered.
      */
     parseMavlink(flightplan: string): void;
+    /**
+     * Load a kmz (Google Earth path) file and parse its coordinate section.
+     * @param kmz The content of a kmz file.
+     * @param name The name to set to the flight plan.
+     */
+    parseKmz(kmz: string, name: string): void;
 }

@@ -244,6 +244,60 @@ var Flightplan = (function (_super) {
             throw new Error('Could not extract valid flight plan from passed mavlink code.');
         }
     };
+    /**
+     * Load a kmz (Google Earth path) file and parse its coordinate section.
+     * @param kmz The content of a kmz file.
+     * @param name The name to set to the flight plan.
+     */
+    Flightplan.prototype.parseKmz = function (kmz, name) {
+        this.clear();
+        var kmzString = JSON.stringify(kmz); //  This means, tabs and linebreaks appear as explicit '\t's and '\n's, and the string starts and ends with '"'.
+        // expecting a string created with JSON.stringify(), 
+        try {
+            // Empty string ('""') denotes 'no flight plan available'.
+            // Leave a cleared flightplan instance.
+            if (kmzString.length <= 2) {
+                return;
+            }
+            kmzString.trim(); // remove whitespace and tabs before and after characters.
+            kmzString = kmzString.substr(1, kmzString.length - 2); // remove " at start and end from stringify.
+            var lines = kmzString.split('\\n');
+            var path = ''; // the line with the waypoints
+            for (var i = 0; i < lines.length; i++) {
+                if (lines[i].indexOf("<coordinates>") !== -1) {
+                    path = lines[i + 1];
+                    break;
+                }
+            }
+            path = path.trim(); // remove whitespace and tabs before and after characters.
+            var waypoints = path.split(' ');
+            var defaultOrientation = 0; // point north
+            var defaultRadius = 2; // 2m radius
+            for (var i = 0; i < waypoints.length; i++) {
+                waypoints[i] = waypoints[i].replace(/\s/g, '');
+                var waypointCoords = waypoints[i].split(',');
+                if (waypointCoords.length !== 3) {
+                    throw new Error("Waypoint with invalid number of coordinates encountered.");
+                }
+                this._waypoints.push(new Waypoint(parseFloat(waypointCoords[1]), parseFloat(waypointCoords[0]), parseFloat(waypointCoords[2]), defaultOrientation, defaultRadius));
+            }
+            if (this._waypoints.length < 2) {
+                throw new Error("Less than two waypoints could be extracted from kmz content");
+            }
+            // Takeoff point
+            this._takeOffPosition = new Waypoint(this._waypoints[0].latitude, this._waypoints[0].longitude, this._waypoints[0].altitude, this._waypoints[0].orientation, this._waypoints[0].radius); // latitude, longitude, height, orientation, radius
+            // Touchdown point
+            this._touchDownPosition = new Waypoint(this._waypoints[this._waypoints.length - 1].latitude, this._waypoints[this._waypoints.length - 1].longitude, this._waypoints[this._waypoints.length - 1].altitude, this._waypoints[this._waypoints.length - 1].orientation, this._waypoints[this._waypoints.length - 1].radius); // latitude, longitude, height, orientation, radius
+            this._name = name;
+        }
+        catch (err) {
+            this.clear();
+            console.log('An error occurred in parseKmz()');
+            console.log(JSON.stringify(err));
+            console.log("Received kmz string was:\n" + kmz);
+            throw (err);
+        }
+    };
     return Flightplan;
 }(events_1.EventEmitter));
 exports.Flightplan = Flightplan;
