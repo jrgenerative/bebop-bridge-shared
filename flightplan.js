@@ -251,18 +251,14 @@ var Flightplan = (function (_super) {
      */
     Flightplan.prototype.parseKmz = function (kmz, name) {
         this.clear();
-        var kmzString = JSON.stringify(kmz); //  This means, tabs and linebreaks appear as explicit '\t's and '\n's, and the string starts and ends with '"'.
+        var kmzString = kmz;
         // expecting a string created with JSON.stringify(), 
         try {
-            // Empty string ('""') denotes 'no flight plan available'.
-            // Leave a cleared flightplan instance.
-            if (kmzString.length <= 2) {
+            if (kmzString.length === 0) {
                 return;
             }
             console.log("Kmz string: " + kmzString);
-            kmzString.trim(); // remove whitespace and tabs before and after characters.
-            kmzString = kmzString.substr(1, kmzString.length - 2); // remove " at start and end from stringify.
-            var lines = kmzString.split('\\n');
+            var lines = kmzString.split('\n');
             var path = ''; // the line with the waypoints
             for (var i = 0; i < lines.length; i++) {
                 if (lines[i].indexOf("<coordinates>") !== -1) {
@@ -271,20 +267,14 @@ var Flightplan = (function (_super) {
                 }
             }
             console.log("path: " + path + ' elngth ' + path.length);
-            path = path.replace("\\t", ""); // remove stringify tabs
-            path = path.replace("\\r", ""); // remove stringify newline feeds
-            path = path.replace("\\n", ""); // remove stringify newline feeds
-            path = path.replace("\t", ""); // remove stringify tabs
-            path = path.replace("\r", ""); // remove stringify newline feeds
-            path = path.replace("\n", ""); // remove stringify newline feeds
             path = path.trim(); // remove whitespace and tabs before and after characters.
-            console.log("path 2: " + path + ' elngth ' + path.length);
             var waypoints = path.split(' ');
             console.log('waypoints ' + JSON.stringify(waypoints));
             var defaultOrientation = 0; // point north
             var defaultRadius = 2; // 2m radius
             for (var i = 0; i < waypoints.length; i++) {
                 console.log('waypoints[i]: ' + JSON.stringify(waypoints[i]));
+                waypoints[i] = waypoints[i].replace(/\s/g, '');
                 var waypointCoords = waypoints[i].split(',');
                 console.log('waypointCoords ' + JSON.stringify(waypointCoords));
                 if (waypointCoords.length !== 3) {
