@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+let geolib = require('geolib');
 
 /**
  * Waypoint.
@@ -137,6 +138,53 @@ export class Flightplan extends EventEmitter {
      */
     get waypoints(): Waypoint[] {
         return this._waypoints;
+    }
+
+    /**
+    * Add waypoints every stepSize meters to the waypoints of this flight path and store the 
+    * result in outFlightPath. This function does not change 'this'. Accuracy radius and orientation
+    * are taken from the previous waypoint of the respective leg.
+    */
+    addWaypoints(stepSize: number) {
+
+        // At least 2 waypoints available?
+        if (this.numWaypoints < 2) {
+            throw new Error("Error adding waypoints. Flight path needs to have at least 2 waypoints.");
+        }
+
+        // backup waypoints
+        let oldWps: Waypoint[] = [];
+        for (let wp of this._waypoints) {
+            oldWps.push(wp.clone());
+        }
+
+        this._waypoints = []; // clear waypoints
+
+        // for each waypoint
+        for (let i = 0; i < (oldWps.length - 1); i++) {
+            let dist = geolib.getDistance(oldWps[i], oldWps[i + 1]); // distance between i and i+1
+            let numSteps = Math.floor(dist / stepSize); // how many (entire) legs fit?
+            this._waypoints.push(oldWps[i]); // add first existing waypoint (i) for each existing leg
+            if (numSteps > 1) {
+                let latStep = (oldWps[i + 1].latitude - oldWps[i].latitude) / numSteps;
+                let lonStep = (oldWps[i + 1].longitude - oldWps[i].longitude) / numSteps;
+                let heightStep = (oldWps[i + 1].altitude - oldWps[i].altitude) / numSteps;
+                // add additional intermediate waypoints
+                for (let j = 1; j < numSteps; j++) {
+                    let lat = oldWps[i].latitude + j * latStep;
+                    let lon = oldWps[i].longitude + j * lonStep;
+                    let height = oldWps[i].altitude + j * heightStep;
+                    let addPoint = new Waypoint(
+                        lat,
+                        lon,
+                        height,
+                        oldWps[i].orientation, // keep orientation
+                        oldWps[i].radius); // keep accuracy
+                    this._waypoints.push(addPoint); // add new intermediate waypoint (i+j*step)
+                }
+            }
+        }
+        this._waypoints.push(oldWps[oldWps.length - 1]); // add last existing waypoint of last leg (length-1)
     }
 
     /**

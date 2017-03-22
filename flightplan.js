@@ -11,6 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var events_1 = require("events");
+var geolib = require('geolib');
 /**
  * Waypoint.
  */
@@ -166,6 +167,45 @@ var Flightplan = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    /**
+    * Add waypoints every stepSize meters to the waypoints of this flight path and store the
+    * result in outFlightPath. This function does not change 'this'. Accuracy radius and orientation
+    * are taken from the previous waypoint of the respective leg.
+    */
+    Flightplan.prototype.addWaypoints = function (stepSize) {
+        // At least 2 waypoints available?
+        if (this.numWaypoints < 2) {
+            throw new Error("Error adding waypoints. Flight path needs to have at least 2 waypoints.");
+        }
+        // backup waypoints
+        var oldWps = [];
+        for (var _i = 0, _a = this._waypoints; _i < _a.length; _i++) {
+            var wp = _a[_i];
+            oldWps.push(wp.clone());
+        }
+        this._waypoints = []; // clear waypoints
+        // for each waypoint
+        for (var i = 0; i < (oldWps.length - 1); i++) {
+            var dist = geolib.getDistance(oldWps[i], oldWps[i + 1]); // distance between i and i+1
+            var numSteps = Math.floor(dist / stepSize); // how many (entire) legs fit?
+            this._waypoints.push(oldWps[i]); // add first existing waypoint (i) for each existing leg
+            if (numSteps > 1) {
+                var latStep = (oldWps[i + 1].latitude - oldWps[i].latitude) / numSteps;
+                var lonStep = (oldWps[i + 1].longitude - oldWps[i].longitude) / numSteps;
+                var heightStep = (oldWps[i + 1].altitude - oldWps[i].altitude) / numSteps;
+                // add additional intermediate waypoints
+                for (var j = 1; j < numSteps; j++) {
+                    var lat = oldWps[i].latitude + j * latStep;
+                    var lon = oldWps[i].longitude + j * lonStep;
+                    var height = oldWps[i].altitude + j * heightStep;
+                    var addPoint = new Waypoint(lat, lon, height, oldWps[i].orientation, // keep orientation
+                    oldWps[i].radius); // keep accuracy
+                    this._waypoints.push(addPoint); // add new intermediate waypoint (i+j*step)
+                }
+            }
+        }
+        this._waypoints.push(oldWps[oldWps.length - 1]); // add last existing waypoint of last leg (length-1)
+    };
     /**
      * Parse a flightplan in Bebop mavlink format.
      * @param flightplan A string in Bebop mavlink format and containing a line with '// (name):{<flightplan-name}.

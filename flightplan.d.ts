@@ -64,6 +64,12 @@ export declare class Flightplan extends EventEmitter {
      */
     readonly waypoints: Waypoint[];
     /**
+    * Add waypoints every stepSize meters to the waypoints of this flight path and store the
+    * result in outFlightPath. This function does not change 'this'. Accuracy radius and orientation
+    * are taken from the previous waypoint of the respective leg.
+    */
+    addWaypoints(stepSize: number): void;
+    /**
      * Parse a flightplan in Bebop mavlink format.
      * @param flightplan A string in Bebop mavlink format and containing a line with '// (name):{<flightplan-name}.
      * Throws and error in case a problem is encountered.
