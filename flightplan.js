@@ -168,8 +168,49 @@ var Flightplan = (function (_super) {
         configurable: true
     });
     /**
-    * Add waypoints every stepSize meters to the waypoints of this flight path.
-    *  Accuracy radius and orientation are taken from the previous waypoint of the respective leg.
+     * Set an accuracy radius for each waypoint.
+     * @param radius Radius set for each waypoint.
+     */
+    Flightplan.prototype.setWaypointRadius = function (radius) {
+        this._waypoints.forEach(function (wp) {
+            wp.radius = radius;
+        });
+        this._takeOffPosition.radius = radius;
+        this._touchDownPosition.radius = radius;
+    };
+    /**
+     * Set the altitude of the flight path.
+     * @param altitude Altitude for all waypoints.
+     */
+    Flightplan.prototype.setAltitude = function (altitude) {
+        this._waypoints.forEach(function (wp) {
+            wp.altitude = altitude;
+        });
+        this._takeOffPosition.altitude = altitude;
+        this._touchDownPosition.altitude = altitude;
+    };
+    /**
+     * Set a single bearing for all waypoints.
+     * @param bearing Bearing for all waypoints.
+     */
+    Flightplan.prototype.setBearing = function (bearing) {
+        this._waypoints.forEach(function (wp) {
+            wp.orientation = bearing;
+        });
+        this._takeOffPosition.orientation = bearing;
+        this._touchDownPosition.orientation = bearing;
+    };
+    /**
+     * Set bearings for each waypoint such that the vehicle
+     * is facing the center of the bounding box of the flight path.
+     */
+    Flightplan.prototype.setBearingToCenter = function () {
+        var center = geolib.getCenterOfBounds(this._waypoints);
+        console.log('center: ' + center);
+    };
+    /**
+    * Add waypoints every stepSize meters to the waypoints of this flight path. Latitude, longitude and altitude is interpolated.
+    *  Waypoint radius and bearing are taken from the previous waypoint of the respective leg.
     */
     Flightplan.prototype.addWaypoints = function (stepSize) {
         // At least 2 waypoints available?

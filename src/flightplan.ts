@@ -141,8 +141,54 @@ export class Flightplan extends EventEmitter {
     }
 
     /**
-    * Add waypoints every stepSize meters to the waypoints of this flight path. 
-    *  Accuracy radius and orientation are taken from the previous waypoint of the respective leg.
+     * Set an accuracy radius for each waypoint.
+     * @param radius Radius set for each waypoint.
+     */
+    setWaypointRadius(radius: number) {
+        this._waypoints.forEach((wp) => {
+            wp.radius = radius;
+        });
+        this._takeOffPosition.radius = radius;
+        this._touchDownPosition.radius = radius;
+    }
+
+    /**
+     * Set the altitude of the flight path.
+     * @param altitude Altitude for all waypoints.
+     */
+    setAltitude(altitude: number) {
+        this._waypoints.forEach((wp) => {
+            wp.altitude = altitude;
+        });
+        this._takeOffPosition.altitude = altitude;
+        this._touchDownPosition.altitude = altitude;
+    }
+
+    /**
+     * Set a single bearing for all waypoints.
+     * @param bearing Bearing for all waypoints.
+     */
+    setBearing(bearing: number) {
+        this._waypoints.forEach((wp) => {
+            wp.orientation = bearing;
+        });
+        this._takeOffPosition.orientation = bearing;
+        this._touchDownPosition.orientation = bearing;
+    }
+
+    /**
+     * Set bearings for each waypoint such that the vehicle
+     * is facing the center of the bounding box of the flight path.
+     */
+    setBearingToCenter() {
+        let center = geolib.getCenterOfBounds(this._waypoints);
+        console.log('center: ' + center);
+    }
+
+
+    /**
+    * Add waypoints every stepSize meters to the waypoints of this flight path. Latitude, longitude and altitude is interpolated.
+    *  Waypoint radius and bearing are taken from the previous waypoint of the respective leg.
     */
     addWaypoints(stepSize: number) {
 

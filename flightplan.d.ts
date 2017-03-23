@@ -64,8 +64,28 @@ export declare class Flightplan extends EventEmitter {
      */
     readonly waypoints: Waypoint[];
     /**
-    * Add waypoints every stepSize meters to the waypoints of this flight path.
-    *  Accuracy radius and orientation are taken from the previous waypoint of the respective leg.
+     * Set an accuracy radius for each waypoint.
+     * @param radius Radius set for each waypoint.
+     */
+    setWaypointRadius(radius: number): void;
+    /**
+     * Set the altitude of the flight path.
+     * @param altitude Altitude for all waypoints.
+     */
+    setAltitude(altitude: number): void;
+    /**
+     * Set a single bearing for all waypoints.
+     * @param bearing Bearing for all waypoints.
+     */
+    setBearing(bearing: number): void;
+    /**
+     * Set bearings for each waypoint such that the vehicle
+     * is facing the center of the bounding box of the flight path.
+     */
+    setBearingToCenter(): void;
+    /**
+    * Add waypoints every stepSize meters to the waypoints of this flight path. Latitude, longitude and altitude is interpolated.
+    *  Waypoint radius and bearing are taken from the previous waypoint of the respective leg.
     */
     addWaypoints(stepSize: number): void;
     /**
