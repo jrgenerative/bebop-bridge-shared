@@ -113,8 +113,11 @@ export class Flightplan extends EventEmitter {
         let captureInterval = 1.0;
 
         let row = 0;
+        let mavlinkString: string = '';
+        // Name of this flightplan
+        mavlinkString += "// (name){" + this.name + "}\n";
         // Header
-        let mavlinkString: string = "QGC WPL 120\n";
+        mavlinkString += "QGC WPL 120\n";
         // Takeoff to first cooridnate
         mavlinkString += row + "\t0\t3\t22\t0.000000\t0.000000\t0.000000\t" + this._takeOffPosition.orientation.toFixed(6) + "\t" + this._takeOffPosition.latitude.toFixed(6) + "\t" + this._takeOffPosition.longitude.toFixed(6) + "\t" + this._takeOffPosition.altitude.toFixed(6) + "\t1\n";
         row = row + 1;
