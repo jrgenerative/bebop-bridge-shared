@@ -40,6 +40,12 @@ export declare class Flightplan extends EventEmitter {
      */
     readonly isValid: boolean;
     /**
+     * (Re)generate the mavlink code from internal waypoint data.
+     * @param holdTimeAtWaypoint The time to wait at each waypoint in seconds.
+     * @param velocity The velocity in [m/s].
+     */
+    updateMavlink(velocity?: number, holdTimeAtWaypoint?: number): void;
+    /**
      * Return the name of this flight plan.
      */
     readonly name: string;

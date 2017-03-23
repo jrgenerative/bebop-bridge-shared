@@ -107,6 +107,50 @@ var Flightplan = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    /**
+     * (Re)generate the mavlink code from internal waypoint data.
+     * @param holdTimeAtWaypoint The time to wait at each waypoint in seconds.
+     * @param velocity The velocity in [m/s].
+     */
+    Flightplan.prototype.updateMavlink = function (velocity, holdTimeAtWaypoint) {
+        if (velocity === void 0) { velocity = 2; }
+        if (holdTimeAtWaypoint === void 0) { holdTimeAtWaypoint = 1; }
+        if (this._takeOffPosition === null || this._touchDownPosition === null || this._waypoints.length === 0) {
+            throw new Error("Flight path has invalid positions. Cannot write flight plan.");
+        }
+        // Take image avery <x> seconds
+        var captureInterval = 1.0;
+        var row = 0;
+        // Header
+        var mavlinkString = "QGC WPL 120\n";
+        // Takeoff to first cooridnate
+        mavlinkString += row + "\t0\t3\t22\t0.000000\t0.000000\t0.000000\t" + this._takeOffPosition.orientation.toFixed(6) + "\t" + this._takeOffPosition.latitude.toFixed(6) + "\t" + this._takeOffPosition.longitude.toFixed(6) + "\t" + this._takeOffPosition.altitude.toFixed(6) + "\t1\n";
+        row = row + 1;
+        mavlinkString += row + "\t0\t3\t178\t0.000000\t" + velocity.toFixed(6) + "\t-1.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+        row = row + 1;
+        // Camera orientation
+        mavlinkString += row + "\t0\t3\t2800\t0.000000\t-90.000000\t0.000000\t30.000000\t0.000000\t0.000000\t0.000000\t1\n";
+        row = row + 1;
+        // Start recording with specified image format and frequency
+        mavlinkString += row + "\t0\t3\t2000\t" + captureInterval.toFixed(6) + "\t0.000000\t0.000108\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+        row = row + 1;
+        // Waypoints
+        for (var i = 0; i < this.waypoints.length; i++) {
+            mavlinkString += row + "\t0\t3\t16\t" + holdTimeAtWaypoint.toFixed(6) + "\t" + this.waypoints[i].radius.toFixed(6) + "\t0.000000\t" + this.waypoints[i].orientation.toFixed(6) + "\t" +
+                this.waypoints[i].latitude.toFixed(6) + "\t" + this.waypoints[i].longitude.toFixed(6) + "\t" + this.waypoints[i].altitude.toFixed(6) + "\t1\n";
+            row = row + 1;
+        }
+        // Stop recording
+        mavlinkString += row + "\t0\t3\t2001\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+        row = row + 1;
+        // Landing
+        mavlinkString += row + "\t0\t3\t21\t0.000000\t0.000000\t0.000000\t" + this._touchDownPosition.orientation.toFixed(6) + "\t" +
+            this._touchDownPosition.latitude.toFixed(6) + "\t" + this._touchDownPosition.longitude.toFixed(6) + "\t" + this._touchDownPosition.altitude.toFixed(6) + "\t1\n";
+        // show the flightplan
+        console.log("Generated mavlink code: ");
+        console.log(mavlinkString);
+        this._mavlink = mavlinkString;
+    };
     Object.defineProperty(Flightplan.prototype, "name", {
         /**
          * Return the name of this flight plan.
