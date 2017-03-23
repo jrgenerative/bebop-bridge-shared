@@ -298,7 +298,9 @@ var Flightplan = (function (_super) {
      * @param kmz The content of a kmz file.
      * @param name The name to set to the flight plan.
      */
-    Flightplan.prototype.parseKmz = function (kmz, name) {
+    Flightplan.prototype.parseKmz = function (kmz, name, bearing, waypointRadius) {
+        if (bearing === void 0) { bearing = 0; }
+        if (waypointRadius === void 0) { waypointRadius = 2; }
         this.clear();
         var kmzString = kmz;
         // expecting a string created with JSON.stringify(), 
@@ -317,22 +319,20 @@ var Flightplan = (function (_super) {
             }
             path = path.trim(); // remove whitespace and tabs before and after characters.
             var waypoints = path.split(' ');
-            var defaultOrientation = 0; // point north
-            var defaultRadius = 2; // 2m radius
             for (var i = 0; i < waypoints.length; i++) {
                 waypoints[i] = waypoints[i].replace(/\s/g, '');
                 var waypointCoords = waypoints[i].split(',');
                 if (waypointCoords.length !== 3) {
                     throw new Error("Waypoint with invalid number of coordinates encountered.");
                 }
-                this._waypoints.push(new Waypoint(parseFloat(waypointCoords[1]), parseFloat(waypointCoords[0]), parseFloat(waypointCoords[2]), defaultOrientation, defaultRadius));
+                this._waypoints.push(new Waypoint(parseFloat(waypointCoords[1]), parseFloat(waypointCoords[0]), parseFloat(waypointCoords[2]), bearing, waypointRadius));
             }
             if (this._waypoints.length < 2) {
                 throw new Error("Less than two waypoints could be extracted from kmz content");
             }
-            // Takeoff point
+            // Takeoff point is equal to first waypoint
             this._takeOffPosition = new Waypoint(this._waypoints[0].latitude, this._waypoints[0].longitude, this._waypoints[0].altitude, this._waypoints[0].orientation, this._waypoints[0].radius); // latitude, longitude, height, orientation, radius
-            // Touchdown point
+            // Touchdown point is equal to last waypoint
             this._touchDownPosition = new Waypoint(this._waypoints[this._waypoints.length - 1].latitude, this._waypoints[this._waypoints.length - 1].longitude, this._waypoints[this._waypoints.length - 1].altitude, this._waypoints[this._waypoints.length - 1].orientation, this._waypoints[this._waypoints.length - 1].radius); // latitude, longitude, height, orientation, radius
             this._name = name;
         }

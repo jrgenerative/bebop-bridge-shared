@@ -289,7 +289,7 @@ export class Flightplan extends EventEmitter {
      * @param kmz The content of a kmz file.
      * @param name The name to set to the flight plan.
      */
-    parseKmz(kmz: string, name: string) {
+    parseKmz(kmz: string, name: string, bearing: number = 0, waypointRadius: number = 2) {
 
         this.clear();
         let kmzString = kmz;
@@ -315,8 +315,6 @@ export class Flightplan extends EventEmitter {
 
             path = path.trim(); // remove whitespace and tabs before and after characters.
             let waypoints: string[] = path.split(' ');
-            let defaultOrientation = 0; // point north
-            let defaultRadius = 2; // 2m radius
             for (let i = 0; i < waypoints.length; i++) {
                 waypoints[i] = waypoints[i].replace(/\s/g, '');
                 let waypointCoords: string[] = waypoints[i].split(',');
@@ -327,8 +325,8 @@ export class Flightplan extends EventEmitter {
                     parseFloat(waypointCoords[1]),
                     parseFloat(waypointCoords[0]),
                     parseFloat(waypointCoords[2]),
-                    defaultOrientation,
-                    defaultRadius
+                    bearing,
+                    waypointRadius
                 ));
             }
 
@@ -336,7 +334,7 @@ export class Flightplan extends EventEmitter {
                 throw new Error("Less than two waypoints could be extracted from kmz content");
             }
 
-            // Takeoff point
+            // Takeoff point is equal to first waypoint
             this._takeOffPosition = new Waypoint(
                 this._waypoints[0].latitude,
                 this._waypoints[0].longitude,
@@ -344,7 +342,7 @@ export class Flightplan extends EventEmitter {
                 this._waypoints[0].orientation,
                 this._waypoints[0].radius); // latitude, longitude, height, orientation, radius
 
-            // Touchdown point
+            // Touchdown point is equal to last waypoint
             this._touchDownPosition = new Waypoint(
                 this._waypoints[this._waypoints.length - 1].latitude,
                 this._waypoints[this._waypoints.length - 1].longitude,

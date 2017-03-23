@@ -80,5 +80,5 @@ export declare class Flightplan extends EventEmitter {
      * @param kmz The content of a kmz file.
      * @param name The name to set to the flight plan.
      */
-    parseKmz(kmz: string, name: string): void;
+    parseKmz(kmz: string, name: string, bearing?: number, waypointRadius?: number): void;
 }
