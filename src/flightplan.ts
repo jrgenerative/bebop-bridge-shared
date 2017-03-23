@@ -141,9 +141,6 @@ export class Flightplan extends EventEmitter {
         mavlinkString += row + "\t0\t3\t21\t0.000000\t0.000000\t0.000000\t" + this._touchDownPosition.orientation.toFixed(6) + "\t" +
             this._touchDownPosition.latitude.toFixed(6) + "\t" + this._touchDownPosition.longitude.toFixed(6) + "\t" + this._touchDownPosition.altitude.toFixed(6) + "\t1\n";
 
-        // show the flightplan
-        console.log("Generated mavlink code: ");
-        console.log(mavlinkString);
 
         this._mavlink = mavlinkString;
     }
