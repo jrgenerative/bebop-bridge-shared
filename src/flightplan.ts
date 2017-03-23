@@ -182,7 +182,12 @@ export class Flightplan extends EventEmitter {
      */
     setBearingToCenter() {
         let center = geolib.getCenterOfBounds(this._waypoints);
-        console.log('center: ' + center);
+        console.log('center: ' + JSON.stringify(center));
+        this._waypoints.forEach((wp) => {
+            let bearing = geolib.getBearing(wp, center);
+            wp.orientation = bearing;
+            console.log('Set bearing to: ' + bearing);
+        });
     }
 
 

@@ -206,7 +206,12 @@ var Flightplan = (function (_super) {
      */
     Flightplan.prototype.setBearingToCenter = function () {
         var center = geolib.getCenterOfBounds(this._waypoints);
-        console.log('center: ' + center);
+        console.log('center: ' + JSON.stringify(center));
+        this._waypoints.forEach(function (wp) {
+            var bearing = geolib.getBearing(wp, center);
+            wp.orientation = bearing;
+            console.log('Set bearing to: ' + bearing);
+        });
     };
     /**
     * Add waypoints every stepSize meters to the waypoints of this flight path. Latitude, longitude and altitude is interpolated.
