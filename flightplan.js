@@ -321,7 +321,9 @@ var Flightplan = (function (_super) {
             }
             for (var i = 0; i < lines.length; i++) {
                 // If we find a line starting with 'QGC'
-                if (lines[i].indexOf("QGC") > -1) {
+                console.log("Mavlink parsing: " + lines[i]);
+                if (lines[i].indexOf("QGC") !== -1) {
+                    console.log("Found QGC: " + lines[i]);
                     var i1 = lines[i].indexOf("120") + 3; // string pos after 'QGC WPL 120 '
                     if (i1 >= lines[i].length - 1) {
                         throw new Error('Invalid flight plan name. Check if \"QGC WPL 120 <name>\" is present in mavlink code.');
