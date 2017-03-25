@@ -114,10 +114,8 @@ export class Flightplan extends EventEmitter {
 
         let row = 0;
         let mavlinkString: string = '';
-        // Name of this flightplan
-        mavlinkString += "// (name){" + this.name + "}\n";
-        // Header
-        mavlinkString += "QGC WPL 120\n";
+        // Header and flightplan name (hack)
+        mavlinkString += "QGC WPL 120 " + this._name + "\n";
         // Takeoff to first cooridnate
         mavlinkString += row + "\t0\t3\t22\t0.000000\t0.000000\t0.000000\t" + this._takeOffPosition.orientation.toFixed(6) + "\t" + this._takeOffPosition.latitude.toFixed(6) + "\t" + this._takeOffPosition.longitude.toFixed(6) + "\t" + this._takeOffPosition.altitude.toFixed(6) + "\t1\n";
         row = row + 1;
@@ -319,8 +317,18 @@ export class Flightplan extends EventEmitter {
                 throw new Error('Invalid flight plan. Less than 3 mavlink statements could be parsed.');
             }
             for (let i = 0; i < lines.length; i++) {
-                // skip any line containing '//' and the one containing 'QGC' (!)
-                if (lines[i].indexOf("//") === -1 && lines[i].indexOf("QGC") === -1) {
+                // If we find a line starting with 'QGC'
+                if (lines[i].indexOf("QGC") > -1) {
+
+                    let i1: number = lines[i].indexOf("120") + 3; // string pos after 'QGC WPL 120 '
+                    if (i1 >= lines[i].length - 1) {
+                        throw new Error('Invalid flight plan name. Check if \"QGC WPL 120 <name>\" is present in mavlink code.');
+                    }
+                    this._name = lines[i].substr(i1, lines[i].length - 1);
+                    this._name = this._name.trim();
+                }
+                // process all lines but skip any line containing '//'
+                else if (lines[i].indexOf("//") === -1) {
                     let currentLine = lines[i].trim(); // remove whitespace and tabs before and after characters.
                     let lineEntries = currentLine.split('\\t');
                     if (lineEntries.length === 12) { // valid command line has 12 entries and ends with '1'.
@@ -346,21 +354,6 @@ export class Flightplan extends EventEmitter {
                     else {
                         // Consider ok. If line encountered with anything which is not 12 entries separated by \t.
                         // throw new Error("Invalid flight plan line encountered. Line doesn't have 12 entries or parsing of \"\\t\" failed: \"" + currentLine + "\".");
-                    }
-                }
-                else {
-                    // Parse the name of the flightplan from a commented line such as:
-                    // // (name){<the_name>}
-                    if (lines[i].indexOf("//") !== -1 && lines[i].indexOf("(name)") !== -1) {
-                        let i1: number = lines[i].indexOf("{");
-                        let i2: number = lines[i].indexOf("}");
-                        if (i1 === -1 || i2 === -1) {
-                            throw new Error('Invalid flight plan name encountered.');
-                        }
-                        if (i2 <= i1) {
-                            throw new Error('Invalid flight plan name encountered.');
-                        }
-                        this._name = lines[i].substr(i1 + 1, i2 - (i1 + 1));
                     }
                 }
             }
